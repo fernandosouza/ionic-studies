@@ -35,11 +35,21 @@ angular
   }
 );
 
-angular
-  .module('scotch-todo')
-  .controller(
-    'main', 
-    function ($scope, $ionicModal, localStorageService) { 
+(function(angular) {
+    angular
+      .module('scotch-todo')
+      .controller(
+        'main', 
+        [
+          '$scope',
+          '$ionicModal',
+          'localStorageService',
+          '$ionicLoading',
+          controller
+        ]
+    );
+
+    function controller ($scope, $ionicModal, localStorageService, $ionicLoading) { 
       var instance = $scope;
 
       //store the entities name in a variable 
@@ -59,6 +69,20 @@ angular
           instance.newTaskModal = modal;
       });
 
+      instance.load = function() {
+        $ionicLoading.show({
+          template: 'Loading...'
+        }).then(function(){
+           instance.getTasks();
+        });
+      };
+      
+      instance.loadFinished = function(){
+        $ionicLoading.hide().then(function(){
+           console.log("The loading indicator is now hidden");
+        });
+      };
+
       instance.openTaskModal = function() {
         instance.newTaskModal.show();
       };
@@ -66,7 +90,7 @@ angular
       instance.closeTaskModal = function() {
         instance.newTaskModal.hide();
       };
-      
+
       instance.getTasks = function () {
         //fetches task from local storage
         if (localStorageService.get(taskData)) {
@@ -74,6 +98,8 @@ angular
         } else {
             instance.tasks = [];
         }
+
+        instance.loadFinished();
       };
 
       instance.createTask = function () {
@@ -96,4 +122,5 @@ angular
         localStorageService.set(taskData, instance.tasks); 
       };
     }
-  );
+
+})(angular);
