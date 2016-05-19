@@ -23,17 +23,17 @@
     <script src="js/app-min.js"></script>
     <script src="js/main-controller-min.js"></script>
   </head>
-  <body ng-app="scotch-todo" ng-controller="main" ng-init="load()" ng-cloak>
+  <body ng-app="scotch-todo" ng-controller="main as todo" ng-init="todo.load()" ng-cloak>
     <ion-pane>
       <ion-header-bar class="bar-stable">
         <h1 class="title">Scotch-Todo</h1>
         <!-- New Task button-->
-        <button class="button button-icon" ng-click="openTaskModal()">
+        <button class="button button-icon" ng-click="todo.openTaskModal()">
             <i class="icon ion-compose"></i>
         </button>
       </ion-header-bar>
       <ion-content>
-        <div class="list card" ng-repeat="task in tasks track by $index">
+        <div class="list card" ng-repeat="task in todo.tasks track by $index">
           <div class="item item-divider">
               <span ng-bind="task.title"></span>
           </div>
@@ -47,10 +47,10 @@
           <div class="item tabs tabs-secondary tabs-icon-left">
               <span class="item item-checkbox">
                   <label class="checkbox">
-                      <input type="checkbox" ng-model="task.completed" ng-click="completeTask($index)">
+                      <input type="checkbox" ng-model="task.completed" ng-click="todo.completeTask($index)">
                   </label>
               </span>
-              <a class="tab-item assertive" ng-click="removeTask($index)">
+              <a class="tab-item assertive" ng-click="todo.removeTask($index)">
                   <i class="icon ion-android-close"></i>
               </a>
           </div>
@@ -62,24 +62,24 @@
       <ion-modal-view>
           <ion-header-bar class="bar-dark">
               <h1 class="title">Create a new Task</h1>
-              <button class="button button-icon" ng-click="closeTaskModal()">
+              <button class="button button-icon" ng-click="todo.closeTaskModal()">
                   <i class="icon ion-android-close"></i>
               </button>
           </ion-header-bar>
           <ion-content>
-              <form ng-submit="createTask()">
+              <form ng-submit="todo.createTask()">
                   <div class="list list-inset">
                       <label class="item item-input">
-                          <input ng-model="task.title" type="text" placeholder="Task title">
+                          <input ng-model="todo.task.title" type="text" placeholder="Task title">
                       </label>
                       <label class="item item-input">
-                          <textarea ng-model="task.content" rows="5" placeholder="Task content"></textarea>
+                          <textarea ng-model="todo.task.content" rows="5" placeholder="Task content"></textarea>
                       </label>
                       <ul class="list">
                           <li class="item item-toggle">
                               Completed?
                               <label class="toggle toggle-balanced">
-                                  <input type="checkbox" ng-model="task.completed">
+                                  <input type="checkbox" ng-model="todo.task.completed">
                                  <div class="track">
                                       <div class="handle"></div>
                                   </div>

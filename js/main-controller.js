@@ -1,88 +1,81 @@
 (function(angular) {
   angular
     .module('scotch-todo')
-    .controller(
-      'main', 
-      [
-        '$scope',
-        '$ionicModal',
-        'localStorageService',
-        '$ionicLoading',
-        controller
-      ]
-  );
+    .controller('main', Doto);
 
-  function controller ($scope, $ionicModal, localStorageService, $ionicLoading) { 
-    var instance = $scope;
+  Doto.$inject = ['$scope', '$ionicModal', 'localStorageService','$ionicLoading'];
+
+  function Doto ($scope, $ionicModal, localStorageService, $ionicLoading) { 
+    var vm = this;
 
     //store the entities name in a variable 
     var taskData = 'task';
 
     //initialize the tasks scope with empty array
-    instance.tasks = [];
+    vm.tasks = [];
 
     //initialize the task scope with empty object
-    instance.task = {};
+    vm.task = {};
 
     //configure the ionic modal before use
     $ionicModal.fromTemplateUrl('new-task-modal.html', {
-        scope: instance,
+        scope: $scope,
         animation: 'slide-in-up'
     }).then(function (modal) {
-        instance.newTaskModal = modal;
+        vm.newTaskModal = modal;
     });
 
-    instance.load = function() {
+    vm.load = function() {
       $ionicLoading.show({
         template: 'Loading...'
       }).then(function(){
-         instance.getTasks();
+         vm.getTasks();
       });
     };
     
-    instance.loadFinished = function(){
+    vm.loadFinished = function(){
       $ionicLoading.hide().then(function(){
          console.log("The loading indicator is now hidden");
       });
     };
 
-    instance.openTaskModal = function() {
-      instance.newTaskModal.show();
+    vm.openTaskModal = function() {
+      vm.newTaskModal.show();
     };
 
-    instance.closeTaskModal = function() {
-      instance.newTaskModal.hide();
+    vm.closeTaskModal = function() {
+      vm.newTaskModal.hide();
     };
 
-    instance.getTasks = function () {
+    vm.getTasks = function () {
       //fetches task from local storage
       if (localStorageService.get(taskData)) {
-          instance.tasks = localStorageService.get(taskData);
+          vm.tasks = localStorageService.get(taskData);
       } else {
-          instance.tasks = [];
+          vm.tasks = [];
       }
 
-      instance.loadFinished();
+      vm.loadFinished();
     };
 
-    instance.createTask = function () {
+    vm.createTask = function () {
       //creates a new task
-      instance.tasks.push(instance.task);
-      localStorageService.set(taskData, instance.tasks);
-      instance.task = {};
+      vm.tasks.push(vm.task);
+      localStorageService.set(taskData, vm.tasks);
+      vm.task = {};
       //close new task modal
-      instance.newTaskModal.hide();
+      vm.newTaskModal.hide();
     };
 
-    instance.removeTask = function (index) {
+    vm.removeTask = function (index) {
       //removes a task
-      instance.tasks.splice(index, 1);
-      localStorageService.set(taskData, instance.tasks);
+      vm.tasks.splice(index, 1);
+      localStorageService.set(taskData, vm.tasks);
     };
 
-    instance.completeTask = function (index) {
+    vm.completeTask = function (index) {
       //updates a task as completed 
-      localStorageService.set(taskData, instance.tasks); 
+      localStorageService.set(taskData, vm.tasks); 
     };
   }
 
