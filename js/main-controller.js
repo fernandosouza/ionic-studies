@@ -7,16 +7,20 @@
 
   function Doto ($scope, $ionicModal, localStorageService, $ionicLoading) { 
     var vm = this;
-
-    //store the entities name in a variable 
     var taskData = 'task';
 
-    //initialize the tasks scope with empty array
     vm.tasks = [];
-
-    //initialize the task scope with empty object
     vm.task = {};
 
+    vm.completeTask = completeTask;
+    vm.closeTaskModal = closeTaskModal;
+    vm.createTask = createTask;
+    vm.getTasks = getTasks;
+    vm.load = load;
+    vm.loadFinished = loadFinished;
+    vm.openTaskModal = openTaskModal;
+    vm.removeTask = removeTask;
+    
     //configure the ionic modal before use
     $ionicModal.fromTemplateUrl('new-task-modal.html', {
         scope: $scope,
@@ -25,29 +29,23 @@
         vm.newTaskModal = modal;
     });
 
-    vm.load = function() {
-      $ionicLoading.show({
-        template: 'Loading...'
-      }).then(function(){
-         vm.getTasks();
-      });
-    };
-    
-    vm.loadFinished = function(){
-      $ionicLoading.hide().then(function(){
-         console.log("The loading indicator is now hidden");
-      });
+    function completeTask(index) {
+      //updates a task as completed 
+      localStorageService.set(taskData, vm.tasks); 
     };
 
-    vm.openTaskModal = function() {
-      vm.newTaskModal.show();
-    };
-
-    vm.closeTaskModal = function() {
+    function closeTaskModal() {
       vm.newTaskModal.hide();
     };
 
-    vm.getTasks = function () {
+    function createTask() {
+      vm.tasks.push(vm.task);
+      localStorageService.set(taskData, vm.tasks);
+      vm.task = {};
+      vm.newTaskModal.hide();
+    };
+
+    function getTasks() {
       //fetches task from local storage
       if (localStorageService.get(taskData)) {
           vm.tasks = localStorageService.get(taskData);
@@ -58,24 +56,28 @@
       vm.loadFinished();
     };
 
-    vm.createTask = function () {
-      //creates a new task
-      vm.tasks.push(vm.task);
-      localStorageService.set(taskData, vm.tasks);
-      vm.task = {};
-      //close new task modal
-      vm.newTaskModal.hide();
+    function load() {
+      $ionicLoading.show({
+        template: 'Loading...'
+      }).then(function(){
+         vm.getTasks();
+      });
+    };
+    
+    function loadFinished(){
+      $ionicLoading.hide().then(function(){
+         console.log("The loading indicator is now hidden");
+      });
     };
 
-    vm.removeTask = function (index) {
+    function openTaskModal() {
+      vm.newTaskModal.show();
+    };
+
+    function removeTask(index) {
       //removes a task
       vm.tasks.splice(index, 1);
       localStorageService.set(taskData, vm.tasks);
-    };
-
-    vm.completeTask = function (index) {
-      //updates a task as completed 
-      localStorageService.set(taskData, vm.tasks); 
     };
   }
 
